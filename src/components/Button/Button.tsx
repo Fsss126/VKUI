@@ -26,33 +26,33 @@ const getContent = (size: ButtonProps['size'], children: ButtonProps['children']
     case 'l':
       return (
         sizeY === SizeType.COMPACT ?
-          <Text weight="medium" vkuiClass="Button__content">{children}</Text>
+          <Text Component="span" weight="medium" vkuiClass="Button__content">{children}</Text>
           :
-          <Title level="3" weight="medium" Component="div" vkuiClass="Button__content">
+          <Title level="3" weight="medium" Component="span" vkuiClass="Button__content">
             {children}
           </Title>
       );
     case 'm':
       return (
         sizeY === SizeType.COMPACT ?
-          <Subhead weight={platform === VKCOM ? 'regular' : 'medium'} vkuiClass="Button__content" Component="div">
+          <Subhead weight={platform === VKCOM ? 'regular' : 'medium'} vkuiClass="Button__content" Component="span">
             {children}
           </Subhead>
           :
-          <Text weight="medium" vkuiClass="Button__content">
+          <Text weight="medium" vkuiClass="Button__content" Component="span">
             {children}
           </Text>
       );
     case 's':
     default:
       if (platform === Platform.IOS) {
-        return <Subhead weight="medium" vkuiClass="Button__content">{children}</Subhead>;
+        return <Subhead weight="medium" vkuiClass="Button__content" Component="span">{children}</Subhead>;
       } else if (platform === Platform.VKCOM) {
-        return <Caption level="1" weight="regular" vkuiClass="Button__content">{children}</Caption>;
+        return <Caption level="1" weight="regular" vkuiClass="Button__content" Component="span">{children}</Caption>;
       } else {
         return sizeY === SizeType.COMPACT ?
-          <Caption level="1" weight="medium" vkuiClass="Button__content">{children}</Caption> :
-          <Subhead weight="medium" vkuiClass="Button__content">{children}</Subhead>;
+          <Caption level="1" weight="medium" vkuiClass="Button__content" Component="span">{children}</Caption> :
+          <Subhead weight="medium" vkuiClass="Button__content" Component="span">{children}</Subhead>;
       }
   }
 };
@@ -80,11 +80,11 @@ const Button: FunctionComponent<ButtonProps> = (props: ButtonProps) => {
     Component={restProps.href ? 'a' : Component}
     activeMode="opacity"
   >
-    <div vkuiClass="Button__in">
-      {before && <div vkuiClass="Button__before">{before}</div>}
+    <span vkuiClass="Button__in">
+      {before && <span vkuiClass="Button__before">{before}</span>}
       {children && getContent(size, children, sizeY, platform)}
-      {after && <div vkuiClass="Button__after">{after}</div>}
-    </div>
+      {after && <span vkuiClass="Button__after">{after}</span>}
+    </span>
   </Tappable>;
 };
 
