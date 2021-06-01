@@ -4,7 +4,7 @@
     <PanelHeader>Button</PanelHeader>
     <Group header={<Header mode="secondary">Типы кнопок</Header>}>
       <Div>
-        <Button>Primary</Button>
+        <Button Component="div">Primary</Button>
       </Div>
       <Div>
         <Button mode="secondary">Secondary</Button>
@@ -33,7 +33,7 @@
     </Group>
     <Group header={<Header mode="secondary">Типы кнопок с disabled="true"</Header>}>
       <Div>
-        <Button disabled>Primary</Button>
+        <Button Component="div" disabled>Primary</Button>
       </Div>
       <Div>
         <Button disabled mode="secondary">Secondary</Button>
