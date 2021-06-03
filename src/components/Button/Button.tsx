@@ -10,6 +10,7 @@ import { HasAlign } from '../../types';
 import { usePlatform } from '../../hooks/usePlatform';
 import { AdaptivityProps, SizeType, withAdaptivity } from '../../hoc/withAdaptivity';
 import { Platform, IOS, VKCOM } from '../../lib/platform';
+import { useExternRef } from '../../hooks/useExternRef';
 
 export interface VKUIButtonProps extends HasAlign {
   mode?: 'primary' | 'secondary' | 'tertiary' | 'outline' | 'commerce' | 'destructive' | 'overlay_primary' | 'overlay_secondary' | 'overlay_outline';
@@ -68,6 +69,7 @@ const Button: FC<ButtonProps> = (props: ButtonProps) => {
   const { size, mode, stretched, align, children, before, after, getRootRef, Component, sizeY, ...restProps } = props;
   const hasIcons = Boolean(before || after);
   const RenderedComponent = restProps.href ? 'a' : Component;
+  const ref = useExternRef(getRootRef);
 
   return <Tappable {...restProps}
     vkuiClass={
@@ -83,7 +85,7 @@ const Button: FC<ButtonProps> = (props: ButtonProps) => {
         },
       )
     }
-    getRootRef={getRootRef}
+    getRootRef={ref}
     Component={RenderedComponent}
     activeMode="opacity"
   >
