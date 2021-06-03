@@ -22,6 +22,17 @@
   opacity: .4;
 }
 
+.AppRoot--focus-visible .Button:not([disabled]):focus {
+  outline: 2px solid var(--accent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .AppRoot--focus-visible .Button:not([disabled]):focus {
+    transition: outline-offset .1s ease;
+    outline-offset: 2px;
+  }
+}
+
 .Button--aln-left .Button__in {
   justify-content: flex-start;
   text-align: left;
