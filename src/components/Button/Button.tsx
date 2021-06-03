@@ -67,6 +67,7 @@ const Button: FC<ButtonProps> = (props: ButtonProps) => {
   const platform = usePlatform();
   const { size, mode, stretched, align, children, before, after, getRootRef, Component, sizeY, ...restProps } = props;
   const hasIcons = Boolean(before || after);
+  const RenderedComponent = restProps.href ? 'a' : Component;
 
   return <Tappable {...restProps}
     vkuiClass={
@@ -83,7 +84,7 @@ const Button: FC<ButtonProps> = (props: ButtonProps) => {
       )
     }
     getRootRef={getRootRef}
-    Component={restProps.href ? 'a' : Component}
+    Component={RenderedComponent}
     activeMode="opacity"
   >
     <span vkuiClass="Button__in">
