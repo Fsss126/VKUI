@@ -6,7 +6,7 @@ import Title from '../Typography/Title/Title';
 import Text from '../Typography/Text/Text';
 import Subhead from '../Typography/Subhead/Subhead';
 import Caption from '../Typography/Caption/Caption';
-import { HasAlign, HasPressEvent } from '../../types';
+import { HasAlign } from '../../types';
 import { usePlatform } from '../../hooks/usePlatform';
 import { AdaptivityProps, SizeType, withAdaptivity } from '../../hoc/withAdaptivity';
 import { Platform, IOS, VKCOM } from '../../lib/platform';
@@ -22,6 +22,11 @@ export interface VKUIButtonProps extends HasAlign {
 }
 
 export interface ButtonProps extends Omit<TappableProps, 'size'>, VKUIButtonProps, HasPressEvent {}
+
+interface ButtonA11yProps {
+  role?: string;
+  tabIndex?: number;
+};
 
 interface ButtonTypographyProps {
   size: ButtonProps['size'];
@@ -70,10 +75,19 @@ const Button: FC<ButtonProps> = (props: ButtonProps) => {
   const platform = usePlatform();
   const { size, mode, stretched, align, children, before, after, getRootRef, Component, sizeY, ...restProps } = props;
   const hasIcons = Boolean(before || after);
-  const RenderedComponent = restProps.href ? 'a' : Component;
   const ref = useExternRef(getRootRef);
 
+  const RenderedComponent = restProps.href ? 'a' : Component;
+
+  const a11yProps: ButtonA11yProps = {};
+
+  if (RenderedComponent !== 'button') {
+    a11yProps.role = 'button';
+    a11yProps.tabIndex = 0;
+  }
+
   return <Tappable {...restProps}
+    {...a11yProps}
     vkuiClass={
       classNames(
         getClassName('Button', platform),
