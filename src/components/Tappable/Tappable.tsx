@@ -1,4 +1,4 @@
-import React, { AllHTMLAttributes, Component, ElementType, RefCallback } from 'react';
+import React, { AllHTMLAttributes, Component, ElementType, MouseEventHandler, RefCallback } from 'react';
 import Touch, { TouchEvent, TouchEventHandler, TouchProps } from '../Touch/Touch';
 import TouchRootContext from '../Touch/TouchContext';
 import { classNames } from '../../lib/classNames';
@@ -6,13 +6,13 @@ import { getClassName } from '../../helpers/getClassName';
 import { ANDROID } from '../../lib/platform';
 import { getOffsetRect } from '../../lib/offset';
 import { coordX, coordY, VKUITouchEvent, VKUITouchEventHander } from '../../lib/touch';
-import { HasPlatform, HasRootRef, Ref } from '../../types';
+import { HasPlatform, HasPressEvent, HasRootRef, Ref } from '../../types';
 import { withPlatform } from '../../hoc/withPlatform';
 import { hasHover } from '@vkontakte/vkjs/lib/InputUtils';
 import { setRef } from '../../lib/utils';
 import { withAdaptivity, AdaptivityProps } from '../../hoc/withAdaptivity';
 
-export interface TappableProps extends AllHTMLAttributes<HTMLElement>, HasRootRef<HTMLElement>, HasPlatform, AdaptivityProps {
+export interface TappableProps extends AllHTMLAttributes<HTMLElement>, HasRootRef<HTMLElement>, HasPlatform, AdaptivityProps, HasPressEvent {
   Component?: ElementType;
   /**
    * Длительность показа active-состояния
@@ -128,10 +128,33 @@ class Tappable extends Component<TappableProps, TappableState> {
   };
 
   /*
+   * Обрабатывает событие onclick / onpress
+   */
+  onPress: MouseEventHandler<HTMLElement> = (event) => {
+    const { onClick, onPress: _onPress } = this.props;
+
+    if (!!onClick) {
+      console.warn('[VKUI] onClick is deprecated, please use onPress instead!');
+
+      return onClick(event);
+    }
+
+    if (!!_onPress) {
+      console.log('Tappable.tsx => _onPress, ', {
+        _onPress,
+        event,
+      });
+
+      return _onPress(event);
+    }
+  };
+
+  /*
    * Обрабатывает событие touchstart
    */
   onStart: TouchEventHandler = ({ originalEvent }: TouchEvent) => {
     !this.insideTouchRoot && this.props.stopPropagation && originalEvent.stopPropagation();
+
     if (this.state.hasActive) {
       if (originalEvent.touches && originalEvent.touches.length > 1) {
         deactivateOtherInstances();
@@ -306,8 +329,23 @@ class Tappable extends Component<TappableProps, TappableState> {
 
   render() {
     const { clicks, active, hovered, hasHover, hasActive } = this.state;
-    const { children, Component, activeEffectDelay,
-      stopPropagation, getRootRef, platform, sizeX, hasMouse, hasHover: propsHasHover, hoverMode, hasActive: propsHasActive, activeMode, ...restProps } = this.props;
+    const {
+      children,
+      Component,
+      activeEffectDelay,
+      stopPropagation,
+      getRootRef,
+      platform,
+      sizeX,
+      hasMouse,
+      hasHover: propsHasHover,
+      hoverMode,
+      hasActive: propsHasActive,
+      activeMode,
+      onClick: onNativeClick,
+      onPress,
+      ...restProps
+    } = this.props;
 
     const isPresetHoverMode = ['opacity', 'background'].includes(hoverMode);
     const isPresetActiveMode = ['opacity', 'background'].includes(activeMode);
@@ -340,6 +378,11 @@ class Tappable extends Component<TappableProps, TappableState> {
       props.getRootRef = this.getRef;
     } else {
       props.ref = this.getRef;
+    }
+
+    if (!!onNativeClick || !!onPress) {
+      // @ts-ignore
+      props.onClick = this.onPress;
     }
 
     return (
