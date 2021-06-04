@@ -22,7 +22,7 @@ export interface VKUIButtonProps extends HasAlign {
 
 export interface ButtonProps extends Omit<TappableProps, 'size'>, VKUIButtonProps {}
 
-interface ButtonContentComponentProps {
+interface ButtonTypographyProps {
   size: ButtonProps['size'];
   platform: Platform;
   sizeY: AdaptivityProps['sizeY'];
@@ -30,7 +30,7 @@ interface ButtonContentComponentProps {
   Component?: TappableProps['Component'];
 }
 
-const ButtonContentComponent: FC<ButtonContentComponentProps> = (props: ButtonContentComponentProps) => {
+const ButtonTypography: FC<ButtonTypographyProps> = (props: ButtonTypographyProps) => {
   const { size, sizeY, platform, ...restProps } = props;
 
   switch (size) {
@@ -92,7 +92,7 @@ const Button: FC<ButtonProps> = (props: ButtonProps) => {
     <span vkuiClass="Button__in">
       {before && <span vkuiClass="Button__before">{before}</span>}
       {children && (
-        <ButtonContentComponent
+        <ButtonTypography
           size={size}
           sizeY={sizeY}
           platform={platform}
@@ -100,7 +100,7 @@ const Button: FC<ButtonProps> = (props: ButtonProps) => {
           Component="span"
         >
           {children}
-        </ButtonContentComponent>
+        </ButtonTypography>
       )}
       {after && <span vkuiClass="Button__after">{after}</span>}
     </span>
