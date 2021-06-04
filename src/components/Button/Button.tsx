@@ -11,6 +11,7 @@ import { usePlatform } from '../../hooks/usePlatform';
 import { AdaptivityProps, SizeType, withAdaptivity } from '../../hoc/withAdaptivity';
 import { Platform, IOS, VKCOM } from '../../lib/platform';
 import { useExternRef } from '../../hooks/useExternRef';
+import { HasPressEvent } from '../../lib/press';
 
 export interface VKUIButtonProps extends HasAlign {
   mode?: 'primary' | 'secondary' | 'tertiary' | 'outline' | 'commerce' | 'destructive' | 'overlay_primary' | 'overlay_secondary' | 'overlay_outline';
