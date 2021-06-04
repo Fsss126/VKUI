@@ -1,4 +1,13 @@
-import React, { AllHTMLAttributes, Component, ElementType, MouseEventHandler, RefCallback } from 'react';
+import React, {
+  AllHTMLAttributes,
+  Component,
+  ElementType,
+  KeyboardEventHandler,
+  KeyboardEvent,
+  MouseEventHandler,
+  MouseEvent,
+  RefCallback,
+} from 'react';
 import Touch, { TouchEvent, TouchEventHandler, TouchProps } from '../Touch/Touch';
 import TouchRootContext from '../Touch/TouchContext';
 import { classNames } from '../../lib/classNames';
@@ -6,11 +15,12 @@ import { getClassName } from '../../helpers/getClassName';
 import { ANDROID } from '../../lib/platform';
 import { getOffsetRect } from '../../lib/offset';
 import { coordX, coordY, VKUITouchEvent, VKUITouchEventHander } from '../../lib/touch';
-import { HasPlatform, HasPressEvent, HasRootRef, Ref } from '../../types';
+import { HasPlatform, HasRootRef, Ref } from '../../types';
 import { withPlatform } from '../../hoc/withPlatform';
 import { hasHover } from '@vkontakte/vkjs/lib/InputUtils';
 import { setRef } from '../../lib/utils';
 import { withAdaptivity, AdaptivityProps } from '../../hoc/withAdaptivity';
+import { HasPressEvent, VKUIPressEventHandler } from '../../lib/press';
 
 export interface TappableProps extends AllHTMLAttributes<HTMLElement>, HasRootRef<HTMLElement>, HasPlatform, AdaptivityProps, HasPressEvent {
   Component?: ElementType;
@@ -128,24 +138,42 @@ class Tappable extends Component<TappableProps, TappableState> {
   };
 
   /*
-   * Обрабатывает событие onclick / onpress
+   * Обрабатывает событие onkeydown
    */
-  onPress: MouseEventHandler<HTMLElement> = (event) => {
-    const { onClick, onPress: _onPress } = this.props;
+  onKeyDown: KeyboardEventHandler = (e: KeyboardEvent<HTMLElement>) => {
+    const accessibleKeys = ['Enter', 'Space', ' '];
 
-    if (!!onClick) {
-      console.warn('[VKUI] onClick is deprecated, please use onPress instead!');
+    if (accessibleKeys.includes(e.nativeEvent.key)) {
+      // превентим дефолт, чтобы за onKeyDown на <button/> и <a/>
+      // не срабатывал onClick
+      e.nativeEvent.preventDefault();
 
-      return onClick(event);
+      return this.onPress(e);
+    }
+  };
+
+  /*
+   * Обрабатывает событие onclick
+   */
+  onClick: MouseEventHandler = (e: MouseEvent<HTMLElement>) => this.onPress(e);
+
+  /*
+   * Обрабатывает кастомное событие onpress
+   */
+  onPress: VKUIPressEventHandler = (e) => {
+    !this.insideTouchRoot && this.props.stopPropagation && e.nativeEvent.stopPropagation();
+
+    const hasOnClick = !!this.props.onClick;
+    const hasOnPress = !!this.props.onPress;
+
+    if (hasOnPress) {
+      return this.props.onPress(e);
     }
 
-    if (!!_onPress) {
-      console.log('Tappable.tsx => _onPress, ', {
-        _onPress,
-        event,
-      });
+    if (!hasOnPress && hasOnClick) {
+      console.warn('[VKUI] onClick is deprecated! Please use onPress');
 
-      return _onPress(event);
+      return this.props.onClick(e as MouseEvent<HTMLElement>);
     }
   };
 
@@ -342,7 +370,7 @@ class Tappable extends Component<TappableProps, TappableState> {
       hoverMode,
       hasActive: propsHasActive,
       activeMode,
-      onClick: onNativeClick,
+      onClick,
       onPress,
       ...restProps
     } = this.props;
@@ -380,11 +408,6 @@ class Tappable extends Component<TappableProps, TappableState> {
       props.ref = this.getRef;
     }
 
-    if (!!onNativeClick || !!onPress) {
-      // @ts-ignore
-      props.onClick = this.onPress;
-    }
-
     return (
       <TappableContext.Consumer>
         {({ insideTappable, onEnter, onLeave }) => {
@@ -407,7 +430,9 @@ class Tappable extends Component<TappableProps, TappableState> {
                     {...touchProps}
                     {...restProps}
                     vkuiClass={classes}
-                    {...props}>
+                    {...props}
+                    onClick={this.onClick}
+                    onKeyDown={this.onKeyDown}>
                     <TappableContext.Provider
                       value={{
                         insideTappable: true,
