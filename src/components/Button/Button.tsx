@@ -32,16 +32,17 @@ interface ButtonTypographyProps {
 
 const ButtonTypography: FC<ButtonTypographyProps> = (props: ButtonTypographyProps) => {
   const { size, sizeY, platform, ...restProps } = props;
+  const isCompact = sizeY === SizeType.COMPACT;
 
   switch (size) {
     case 'l':
-      if (sizeY === SizeType.COMPACT) {
+      if (isCompact) {
         return <Text weight="medium" {...restProps} />;
       }
 
       return <Title level="3" weight="medium" {...restProps} />;
     case 'm':
-      if (sizeY === SizeType.COMPACT) {
+      if (isCompact) {
         return <Subhead weight={platform === VKCOM ? 'regular' : 'medium'} {...restProps} />;
       }
 
@@ -56,7 +57,7 @@ const ButtonTypography: FC<ButtonTypographyProps> = (props: ButtonTypographyProp
         return <Caption level="1" weight="regular" {...restProps} />;
       }
 
-      if (sizeY === SizeType.COMPACT) {
+      if (isCompact) {
         return <Caption level="1" weight="medium" {...restProps} />;
       }
 
