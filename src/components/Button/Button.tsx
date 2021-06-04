@@ -6,7 +6,7 @@ import Title from '../Typography/Title/Title';
 import Text from '../Typography/Text/Text';
 import Subhead from '../Typography/Subhead/Subhead';
 import Caption from '../Typography/Caption/Caption';
-import { HasAlign } from '../../types';
+import { HasAlign, HasPressEvent } from '../../types';
 import { usePlatform } from '../../hooks/usePlatform';
 import { AdaptivityProps, SizeType, withAdaptivity } from '../../hoc/withAdaptivity';
 import { Platform, IOS, VKCOM } from '../../lib/platform';
@@ -21,7 +21,7 @@ export interface VKUIButtonProps extends HasAlign {
   after?: ReactNode;
 }
 
-export interface ButtonProps extends Omit<TappableProps, 'size'>, VKUIButtonProps {}
+export interface ButtonProps extends Omit<TappableProps, 'size'>, VKUIButtonProps, HasPressEvent {}
 
 interface ButtonTypographyProps {
   size: ButtonProps['size'];
