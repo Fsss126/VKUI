@@ -81,13 +81,14 @@ const Button: FC<ButtonProps> = (props: ButtonProps) => {
 
   const a11yProps: ButtonA11yProps = {};
 
-  if (RenderedComponent !== 'button') {
+  if (RenderedComponent !== 'button' && RenderedComponent !== 'a') {
     a11yProps.role = 'button';
     a11yProps.tabIndex = 0;
   }
 
-  return <Tappable {...restProps}
+  return <Tappable
     {...a11yProps}
+    {...restProps}
     vkuiClass={
       classNames(
         getClassName('Button', platform),
