@@ -141,9 +141,9 @@ class Tappable extends Component<TappableProps, TappableState> {
    * Обрабатывает событие onkeydown
    */
   onKeyDown: KeyboardEventHandler = (e: KeyboardEvent<HTMLElement>) => {
-    const accessibleKeys = ['Enter', 'Space', ' '];
+    const accessibleKeys = ['ENTER', 'SPACE', ' '];
 
-    if (accessibleKeys.includes(e.nativeEvent.key)) {
+    if (accessibleKeys.includes(e.nativeEvent.key.toUpperCase())) {
       // превентим дефолт, чтобы за onKeyDown на <button/> и <a/>
       // не срабатывал onClick
       e.nativeEvent.preventDefault();
