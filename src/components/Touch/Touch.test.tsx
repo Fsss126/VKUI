@@ -48,7 +48,7 @@ describe('Touch', () => {
       slideRight(screen.getByTestId('inner'));
       expect(clicked.container).toBe(false);
       expect(clicked.touch).toBe(false);
-      // expect(clicked.content).toBe(false);
+      expect(clicked.content).toBe(false);
     });
   });
 });
