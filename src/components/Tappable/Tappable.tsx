@@ -408,6 +408,15 @@ class Tappable extends Component<TappableProps, TappableState> {
       props.onEnd = this.onEnd;
       /* eslint-enable */
       props.getRootRef = this.getRef;
+
+      switch (Component) {
+        case 'a':
+        case 'button':
+        case 'input':
+          break;
+        default:
+          props.tabIndex = restProps.tabIndex !== undefined ? restProps.tabIndex : 0;
+      }
     } else {
       props.ref = this.getRef;
     }
