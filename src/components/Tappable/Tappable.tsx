@@ -7,7 +7,6 @@ import React, {
   MouseEventHandler,
   MouseEvent,
   RefCallback,
-  RefObject,
 } from 'react';
 import Touch, { TouchEvent, TouchEventHandler, TouchProps } from '../Touch/Touch';
 import TouchRootContext from '../Touch/TouchContext';
@@ -147,7 +146,7 @@ class Tappable extends Component<TappableProps, TappableState> {
       if (this.props.Component !== 'button') {
         e.nativeEvent.preventDefault();
 
-        (this.props.getRootRef as RefObject<HTMLElement>)?.current?.click();
+        this.container.click();
       }
     }
   };
@@ -157,6 +156,7 @@ class Tappable extends Component<TappableProps, TappableState> {
    */
   onClick: MouseEventHandler = (e: MouseEvent<HTMLElement>) => {
     const { onClick, stopPropagation } = this.props;
+
     !this.insideTouchRoot && stopPropagation && e.nativeEvent.stopPropagation();
 
     if (!!onClick) {
