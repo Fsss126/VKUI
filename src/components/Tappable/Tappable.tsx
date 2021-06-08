@@ -140,14 +140,27 @@ class Tappable extends Component<TappableProps, TappableState> {
    * Обрабатывает событие onkeydown
    */
   onKeyDown: KeyboardEventHandler = (e: KeyboardEvent<HTMLElement>) => {
-    const accessibleKeys = ['ENTER', 'SPACE', ' '];
-
-    if (accessibleKeys.includes(e.nativeEvent.key.toUpperCase())) {
-      if (this.props.Component !== 'button') {
-        e.nativeEvent.preventDefault();
-
+    const triggerClick = ({ Component, role }: { Component: ElementType; role: string }) => {
+      if (this.props.Component !== Component && this.props.role === role) {
         this.container.click();
       }
+    };
+
+    const triggerButtonClick = () => triggerClick({ Component: 'button', role: 'button' });
+
+    switch (e.nativeEvent.key.toUpperCase()) {
+      case 'ENTER':
+        triggerButtonClick();
+        // links, unlike buttons, should only activate on Enter
+        // see https://w3c.github.io/aria-practices/examples/link/link.html
+        triggerClick({ Component: 'a', role: 'link' });
+        break;
+      case 'SPACE':
+      case ' ':
+        triggerButtonClick();
+        break;
+      default:
+        break;
     }
   };
 
