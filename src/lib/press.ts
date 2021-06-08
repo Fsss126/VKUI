@@ -4,10 +4,12 @@ export type VKUIPressEvent = MouseEvent<HTMLElement> | KeyboardEvent<HTMLElement
 export type VKUIPressEventHandler = (e: VKUIPressEvent) => void;
 
 export interface HasPressEvent {
-  /** @deprecated use `onPress` */
+  /**
+   * @deprecated для любых тегов, кроме `button` и `a`. Используйте `onPress`.
+   */
   onClick?: MouseEventHandler<HTMLElement>;
   /**
-   * Событие при нажатии
+   * Кастомное событие при нажатии
    */
   onPress?: VKUIPressEventHandler;
 }

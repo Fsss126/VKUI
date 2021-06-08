@@ -171,7 +171,11 @@ class Tappable extends Component<TappableProps, TappableState> {
     }
 
     if (!hasOnPress && hasOnClick) {
-      console.warn('[VKUI] onClick is deprecated! Please use onPress');
+      const { Component } = this.props;
+
+      if (Component !== 'button' && Component !== 'a') {
+        console.warn('[VKUI/Tappable] onClick is deprecated! Please use onPress');
+      }
 
       return this.props.onClick(e as MouseEvent<HTMLElement>);
     }
