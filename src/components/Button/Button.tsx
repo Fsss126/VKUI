@@ -11,7 +11,6 @@ import { usePlatform } from '../../hooks/usePlatform';
 import { AdaptivityProps, SizeType, withAdaptivity } from '../../hoc/withAdaptivity';
 import { Platform, IOS, VKCOM } from '../../lib/platform';
 import { useExternRef } from '../../hooks/useExternRef';
-import { HasPressEvent } from '../../lib/press';
 
 export interface VKUIButtonProps extends HasAlign {
   mode?: 'primary' | 'secondary' | 'tertiary' | 'outline' | 'commerce' | 'destructive' | 'overlay_primary' | 'overlay_secondary' | 'overlay_outline';
@@ -21,7 +20,7 @@ export interface VKUIButtonProps extends HasAlign {
   after?: ReactNode;
 }
 
-export interface ButtonProps extends Omit<TappableProps, 'size'>, VKUIButtonProps, HasPressEvent {}
+export interface ButtonProps extends Omit<TappableProps, 'size'>, VKUIButtonProps {}
 
 interface ButtonTypographyProps {
   size: ButtonProps['size'];

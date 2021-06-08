@@ -274,4 +274,3 @@ export { ViewWidth, ViewHeight, SizeType } from './components/AdaptivityProvider
 export type { AlignType, HasPlatform, HasInsets } from './types';
 export type { PlatformType } from './lib/platform';
 export type { AdaptivityProps } from './hoc/withAdaptivity';
-export type { HasPressEvent } from './lib/press';

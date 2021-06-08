@@ -7,6 +7,7 @@ import React, {
   MouseEventHandler,
   MouseEvent,
   RefCallback,
+  RefObject,
 } from 'react';
 import Touch, { TouchEvent, TouchEventHandler, TouchProps } from '../Touch/Touch';
 import TouchRootContext from '../Touch/TouchContext';
@@ -20,9 +21,8 @@ import { withPlatform } from '../../hoc/withPlatform';
 import { hasHover } from '@vkontakte/vkjs/lib/InputUtils';
 import { setRef } from '../../lib/utils';
 import { withAdaptivity, AdaptivityProps } from '../../hoc/withAdaptivity';
-import { HasPressEvent, VKUIPressEventHandler } from '../../lib/press';
 
-export interface TappableProps extends AllHTMLAttributes<HTMLElement>, HasRootRef<HTMLElement>, HasPlatform, AdaptivityProps, HasPressEvent {
+export interface TappableProps extends AllHTMLAttributes<HTMLElement>, HasRootRef<HTMLElement>, HasPlatform, AdaptivityProps {
   Component?: ElementType;
   /**
    * Длительность показа active-состояния
@@ -144,40 +144,23 @@ class Tappable extends Component<TappableProps, TappableState> {
     const accessibleKeys = ['ENTER', 'SPACE', ' '];
 
     if (accessibleKeys.includes(e.nativeEvent.key.toUpperCase())) {
-      // превентим дефолт, чтобы за onKeyDown на <button/> и <a/>
-      // не срабатывал onClick
-      e.nativeEvent.preventDefault();
+      if (this.props.Component !== 'button') {
+        e.nativeEvent.preventDefault();
 
-      return this.onPress(e);
+        (this.props.getRootRef as RefObject<HTMLElement>).current.click();
+      }
     }
   };
 
   /*
    * Обрабатывает событие onclick
    */
-  onClick: MouseEventHandler = (e: MouseEvent<HTMLElement>) => this.onPress(e);
+  onClick: MouseEventHandler = (e: MouseEvent<HTMLElement>) => {
+    const { onClick, stopPropagation } = this.props;
+    !this.insideTouchRoot && stopPropagation && e.nativeEvent.stopPropagation();
 
-  /*
-   * Обрабатывает кастомное событие onpress
-   */
-  onPress: VKUIPressEventHandler = (e) => {
-    !this.insideTouchRoot && this.props.stopPropagation && e.nativeEvent.stopPropagation();
-
-    const hasOnClick = !!this.props.onClick;
-    const hasOnPress = !!this.props.onPress;
-
-    if (hasOnPress) {
-      return this.props.onPress(e);
-    }
-
-    if (!hasOnPress && hasOnClick) {
-      const { Component } = this.props;
-
-      if (Component !== 'button' && Component !== 'a') {
-        console.warn('[VKUI/Tappable] onClick is deprecated! Please use onPress');
-      }
-
-      return this.props.onClick(e as MouseEvent<HTMLElement>);
+    if (!!onClick) {
+      return onClick(e);
     }
   };
 
@@ -375,7 +358,6 @@ class Tappable extends Component<TappableProps, TappableState> {
       hasActive: propsHasActive,
       activeMode,
       onClick,
-      onPress,
       ...restProps
     } = this.props;
 
@@ -406,6 +388,8 @@ class Tappable extends Component<TappableProps, TappableState> {
       props.onStart = this.onStart;
       props.onMove = this.onMove;
       props.onEnd = this.onEnd;
+      props.onKeyDown = this.onKeyDown;
+      props.onClick = this.onClick;
       /* eslint-enable */
       props.getRootRef = this.getRef;
 
@@ -443,9 +427,7 @@ class Tappable extends Component<TappableProps, TappableState> {
                     {...touchProps}
                     {...restProps}
                     vkuiClass={classes}
-                    {...props}
-                    onClick={this.onClick}
-                    onKeyDown={this.onKeyDown}>
+                    {...props}>
                     <TappableContext.Provider
                       value={{
                         insideTappable: true,
