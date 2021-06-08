@@ -1,4 +1,4 @@
-import { FC, HTMLAttributes, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { FC, HTMLAttributes, useEffect, useMemo, useRef, useState } from 'react';
 import { useDOM } from '../../lib/dom';
 import { classNames } from '../../lib/classNames';
 import { AppRootContext } from './AppRootContext';
@@ -8,6 +8,7 @@ import { classScopingMode } from '../../lib/classScopingMode';
 import { IconSettingsProvider } from '@vkontakte/icons';
 import { elementScrollController, globalScrollController, ScrollContext, ScrollContextInterface } from './ScrollContext';
 import { noop } from '../../lib/utils';
+import { useFocusVisible } from '../../hooks/useFocusVisible';
 
 // Используйте classList, но будьте осторожны
 /* eslint-disable no-restricted-properties */
@@ -29,10 +30,9 @@ const AppRoot: FC<AppRootProps> = ({
 }) => {
   // normalize mode
   const mode = _mode || (_embedded ? 'embedded' : 'full');
-
+  const isFocusVisible = useFocusVisible();
   const rootRef = useRef<HTMLDivElement>();
   const [portalRoot, setPortalRoot] = useState<HTMLDivElement>(null);
-  const [isFocusVisible, toggleFocusVisible] = useState<boolean>(true);
   const { window, document } = useDOM();
 
   const initialized = useRef(false);
@@ -43,36 +43,6 @@ const AppRoot: FC<AppRootProps> = ({
     classScopingMode.noConflict = noLegacyClasses;
     initialized.current = true;
   }
-
-  // manage focus state
-  const addFocusVisible = useCallback(({ key }: KeyboardEvent) => {
-    if (key.toUpperCase() === 'TAB') {
-      toggleFocusVisible(true);
-    }
-  }, [toggleFocusVisible]);
-
-  const removeFocusVisible = useCallback(() => {
-    toggleFocusVisible(false);
-  }, [toggleFocusVisible]);
-
-  useEffect(() => {
-    const eventOptions = {
-      passive: true,
-      capture: true,
-    };
-
-    document.addEventListener('keydown', addFocusVisible, eventOptions);
-
-    document.addEventListener('mousedown', removeFocusVisible, eventOptions);
-    document.addEventListener('touchstart', removeFocusVisible, eventOptions);
-
-    return () => {
-      document.removeEventListener('keydown', addFocusVisible);
-
-      document.removeEventListener('mousedown', removeFocusVisible);
-      document.removeEventListener('touchstart', removeFocusVisible);
-    };
-  }, []);
 
   // dev warnings
   useEffect(() => {
