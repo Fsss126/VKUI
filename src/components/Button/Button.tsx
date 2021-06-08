@@ -23,11 +23,6 @@ export interface VKUIButtonProps extends HasAlign {
 
 export interface ButtonProps extends Omit<TappableProps, 'size'>, VKUIButtonProps, HasPressEvent {}
 
-interface ButtonA11yProps {
-  role?: string;
-  tabIndex?: number;
-};
-
 interface ButtonTypographyProps {
   size: ButtonProps['size'];
   platform: Platform;
@@ -79,15 +74,12 @@ const Button: FC<ButtonProps> = (props: ButtonProps) => {
 
   const RenderedComponent = restProps.href ? 'a' : Component;
 
-  const a11yProps: ButtonA11yProps = {};
-
-  if (RenderedComponent !== 'button' && RenderedComponent !== 'a') {
-    a11yProps.role = 'button';
-    a11yProps.tabIndex = 0;
+  let accessibleRole: string = null;
+  if (RenderedComponent !== 'a' && RenderedComponent !== 'button' && RenderedComponent !== 'input') {
+    accessibleRole = 'button';
   }
 
   return <Tappable
-    {...a11yProps}
     {...restProps}
     vkuiClass={
       classNames(
@@ -102,6 +94,7 @@ const Button: FC<ButtonProps> = (props: ButtonProps) => {
         },
       )
     }
+    role={restProps.role ? restProps.role : accessibleRole}
     getRootRef={ref}
     Component={RenderedComponent}
     activeMode="opacity"
