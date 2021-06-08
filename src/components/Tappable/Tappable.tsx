@@ -147,7 +147,7 @@ class Tappable extends Component<TappableProps, TappableState> {
       if (this.props.Component !== 'button') {
         e.nativeEvent.preventDefault();
 
-        (this.props.getRootRef as RefObject<HTMLElement>).current.click();
+        (this.props.getRootRef as RefObject<HTMLElement>)?.current?.click();
       }
     }
   };
