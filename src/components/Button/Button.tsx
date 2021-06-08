@@ -1,4 +1,4 @@
-import { FC, ReactNode } from 'react';
+import { ElementType, FC, ReactNode } from 'react';
 import { getClassName } from '../../helpers/getClassName';
 import { classNames } from '../../lib/classNames';
 import Tappable, { TappableProps } from '../Tappable/Tappable';
@@ -27,7 +27,7 @@ interface ButtonTypographyProps {
   platform: Platform;
   sizeY: AdaptivityProps['sizeY'];
   children?: ButtonProps['children'];
-  Component?: TappableProps['Component'];
+  Component?: ElementType;
 }
 
 const ButtonTypography: FC<ButtonTypographyProps> = (props: ButtonTypographyProps) => {
