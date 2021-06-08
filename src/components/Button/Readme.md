@@ -4,7 +4,7 @@
     <PanelHeader>Button</PanelHeader>
     <Group header={<Header mode="secondary">Типы кнопок</Header>}>
       <Div>
-        <Button Component="div">Primary</Button>
+        <Button>Primary</Button>
       </Div>
       <Div>
         <Button mode="secondary">Secondary</Button>
@@ -115,6 +115,21 @@
     <Group header={<Header mode="secondary">Ссылки в виде кнопок</Header>}>
       <Div>
         <Button href="#">I am link</Button>
+      </Div>
+    </Group>
+    <Group header={<Header mode="secondary">Доступность кнопок</Header>}>
+      <Div>
+        <Button
+          Component="div"
+          onClick={e => { console.log('clicked >>>', e.target.textContent); return e;}}
+        >Primary Button (div)</Button>
+      </Div>
+      <Div>
+        <Button
+          Component="span"
+          role="link"
+          onClick={e => { console.log('clicked >>>', e.target.textContent); return e;}}
+        >I am link (span)</Button>
       </Div>
     </Group>
   </Panel>
